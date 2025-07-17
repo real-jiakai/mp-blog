@@ -1,0 +1,33 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BlogPost from '../../../layouts/BlogPost.astro';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => {
+		const date = new Date(post.data.pubDate);
+		const year = date.getFullYear().toString();
+		const month = (date.getMonth() + 1).toString().padStart(2, '0');
+		const slug = post.data.slug || post.id; // 使用自定义slug或默认id
+		
+		return {
+			params: { 
+				year: year,
+				month: month,
+				slug: slug 
+			},
+			props: post,
+		};
+	});
+}
+
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+	<Content />
+</BlogPost>
