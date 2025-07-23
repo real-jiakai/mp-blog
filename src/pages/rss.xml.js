@@ -3,7 +3,10 @@ import { getCollection } from 'astro:content';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 export async function GET(context) {
-	const posts = await getCollection('blog');
+	const posts = await getCollection('blog', ({ data }) => {
+		// 过滤掉草稿文章
+		return data.draft !== true;
+	});
 	
 	// 渲染每篇文章的完整内容
 	const rssItems = await Promise.all(

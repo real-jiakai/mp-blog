@@ -3,26 +3,23 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} 顾佳凯 版权所有
+	<div class="footer-content">
+		&copy; {today.getFullYear()} 顾佳凯 版权所有
+	</div>
 </footer>
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
+		background: #c0c0c0;
+		padding: 15px 0;
+		margin-top: auto;
+		font-size: 14px;
+	}
+	
+	.footer-content {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 0 20px;
 		text-align: center;
-	}
-	.social-links {
-		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
-	}
-	.social-links a {
-		text-decoration: none;
-		color: rgb(var(--gray));
-	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+		color: #000000;
 	}
 </style>

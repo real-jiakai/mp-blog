@@ -1,0 +1,87 @@
+/* 自定义98.css样式覆盖 */
+
+/* 调整字体大小从11px到16px */
+body {
+  font-size: 16px;
+}
+
+.title-bar,
+.window,
+button,
+input,
+label,
+legend,
+li[role=tab],
+option,
+select,
+table,
+textarea,
+ul.tree-view {
+  font-size: 16px;
+}
+
+/* 调整按钮最小高度以适应更大字体 */
+button,
+input[type=reset],
+input[type=submit] {
+  min-height: 32px;
+  padding: 4px 16px;
+}
+
+/* 调整输入框高度 */
+input[type=email],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=text],
+input[type=url],
+select {
+  height: 32px;
+  padding: 6px 8px;
+}
+
+input[type=number] {
+  height: 33px;
+  padding: 6px 8px;
+}
+
+/* 调整复选框和单选按钮标签行高 */
+input[type=checkbox]+label,
+input[type=radio]+label {
+  line-height: 20px;
+}
+
+/* 调整状态栏字段内边距 */
+.status-bar-field {
+  padding: 4px 6px;
+}
+
+/* 调整窗口体边距 */
+.window-body {
+  margin: 12px;
+}
+
+/* 调整字段行间距 */
+[class^=field-row]+[class^=field-row] {
+  margin-top: 8px;
+}
+
+.field-row-stacked *+* {
+  margin-top: 8px;
+}
+
+/* 调整树视图内边距 */
+ul.tree-view {
+  padding: 8px;
+}
+
+ul.tree-view li,
+ul.tree-view ul {
+  margin-top: 4px;
+}
+
+/* 首页特定样式 - 确保与其他页面宽度一致 */
+body .desktop .window .window-body {
+  padding: 20px !important;
+  margin: 12px;
+}

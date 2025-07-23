@@ -4,4 +4,4 @@ This blog serves as a public mirror for articles published on WeChat Official Ac
 
 # Acknowledgements
 
-- Made with ❤️ with GitHub Copilot
+- Made with ❤️ with GitHub Copilot & Trae SOLO & Claude Code.

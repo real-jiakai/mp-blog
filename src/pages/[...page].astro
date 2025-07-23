@@ -6,24 +6,24 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 
-const posts = (await getCollection('blog', ({ data }) => {
-	// 过滤掉草稿文章
-	return data.draft !== true;
-})).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-).slice(0, 10); // 只显示前10篇文章
+export async function getStaticPaths({ paginate }) {
+	const posts = (await getCollection('blog', ({ data }) => {
+		// 过滤掉草稿文章
+		return data.draft !== true;
+	})).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
+	
+	return paginate(posts, { pageSize: 10 });
+}
 
-const allPosts = await getCollection('blog', ({ data }) => {
-	// 过滤掉草稿文章
-	return data.draft !== true;
-});
-const totalPages = Math.ceil(allPosts.length / 10);
+const { page } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={`${SITE_TITLE} - 第${page.currentPage}页`} description={SITE_DESCRIPTION} />
 		<style>
 			html, body {
 				height: 100%;
@@ -66,12 +66,12 @@ const totalPages = Math.ceil(allPosts.length / 10);
 			}
 			
 			.article-item {
-				padding: 20px 50px;
+				padding: 15px 20px;
 				border-bottom: 1px solid #808080;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				margin-bottom: 8px;
+				margin-bottom: 5px;
 			}
 			
 			.article-item:last-child {
@@ -83,8 +83,8 @@ const totalPages = Math.ceil(allPosts.length / 10);
 				text-decoration: none;
 				font-weight: bold;
 				flex: 1;
-				font-size: 18px;
-				line-height: 1.5;
+				font-size: 16px;
+				line-height: 1.4;
 			}
 			
 			.article-title:hover {
@@ -93,10 +93,9 @@ const totalPages = Math.ceil(allPosts.length / 10);
 			
 			.article-date {
 				color: #666666;
-				font-size: 14px;
-				margin-left: 80px;
+				font-size: 13px;
+				margin-left: 30px;
 				white-space: nowrap;
-				min-width: 120px;
 			}
 			
 			.pagination {
@@ -124,11 +123,11 @@ const totalPages = Math.ceil(allPosts.length / 10);
 		<div class="desktop">
 			<div class="window">
 				<div class="title-bar">
-					<div class="title-bar-text">微信公众号文章列表</div>
+					<div class="title-bar-text">微信公众号文章列表 - 第{page.currentPage}页</div>
 				</div>
 				<div class="window-body">
 					<div class="article-list">
-						{posts.map((post) => {
+						{page.data.map((post) => {
 							const date = new Date(post.data.pubDate);
 							const year = date.getFullYear();
 							const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -146,14 +145,22 @@ const totalPages = Math.ceil(allPosts.length / 10);
 						})}
 					</div>
 					
-					{totalPages > 1 && (
+					{page.lastPage > 1 && (
 						<div class="pagination">
-							<span class="current">1</span>
-							{Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map((pageNum) => (
-								<a href={`/${pageNum}/`}>{pageNum}</a>
+							{page.url.prev && (
+								<a href={page.url.prev} class="button">上一页</a>
+							)}
+							
+							{Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => (
+								pageNum === page.currentPage ? (
+									<span class="current">{pageNum}</span>
+								) : (
+									<a href={pageNum === 1 ? '/' : `/${pageNum}/`}>{pageNum}</a>
+								)
 							))}
-							{totalPages > 1 && (
-								<a href="/2/" class="button">下一页</a>
+							
+							{page.url.next && (
+								<a href={page.url.next} class="button">下一页</a>
 							)}
 						</div>
 					)}

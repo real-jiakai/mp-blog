@@ -1,0 +1,78 @@
+---
+// 导航栏组件
+---
+
+<nav class="navigation">
+	<div class="nav-container">
+		<div class="nav-left">
+			<span class="site-title">顾佳凯的微信公众号</span>
+		</div>
+		<div class="nav-center">
+			<a href="/" class="nav-link">首页</a>
+			<a href="/about/" class="nav-link">关于</a>
+		</div>
+		<div class="nav-right">
+			<a href="https://github.com/real-jiakai/mp-blog" class="nav-link" target="_blank">GitHub</a>
+			<a href="/rss.xml" class="nav-link">RSS</a>
+		</div>
+	</div>
+</nav>
+
+<style>
+	.navigation {
+		background: #c0c0c0;
+		border-bottom: 2px solid #808080;
+		padding: 8px 0;
+		margin-bottom: 20px;
+	}
+	
+	.nav-container {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 0 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	.nav-left {
+		flex: 1;
+	}
+	
+	.nav-center {
+		display: flex;
+		gap: 20px;
+	}
+	
+	.nav-right {
+		display: flex;
+		gap: 10px;
+		flex: 1;
+		justify-content: flex-end;
+	}
+	
+	.site-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #000000;
+	}
+	
+	.nav-link {
+		color: #000000;
+		text-decoration: none;
+		padding: 4px 12px;
+		border: 1px outset #c0c0c0;
+		background: #c0c0c0;
+		display: inline-block;
+		font-size: 16px;
+	}
+	
+	.nav-link:hover {
+		border: 1px inset #c0c0c0;
+	}
+	
+	.nav-link.active {
+		border: 1px inset #c0c0c0;
+		background: #808080;
+	}
+</style>

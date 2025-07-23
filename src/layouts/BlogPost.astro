@@ -1,90 +1,241 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import { Image } from 'astro:assets';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	prevPost?: CollectionEntry<'blog'> | null;
+	nextPost?: CollectionEntry<'blog'> | null;
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, prevPost, nextPost } = Astro.props;
+
+// 生成文章URL的辅助函数
+function getPostUrl(post: CollectionEntry<'blog'>) {
+	const date = new Date(post.data.pubDate);
+	const year = date.getFullYear();
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const slug = post.data.slug || post.id;
+	return `/${year}/${month}/${slug}/`;
+}
 ---
 
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
+			html, body {
+				height: 100%;
 				margin: 0;
+				padding: 0;
 			}
-			.hero-image {
-				width: 100%;
+			
+			body {
+				background: #c0c0c0;
+				font-family: 'MS Sans Serif', sans-serif;
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh;
 			}
-			.hero-image img {
-				display: block;
+			
+			.desktop {
+				max-width: 800px;
 				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				padding: 0 20px;
+				flex: 1;
+				display: flex
 			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+			
+			.window {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+			
+			.window-body {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+			
+			.article-content {
+				flex: 1;
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+			
+			.article-header {
+				padding: 15px;
+				border-bottom: 1px solid #808080;
+				margin-bottom: 15px;
 			}
-			.last-updated-on {
+			
+			.article-title {
+				margin: 0 0 10px 0;
+				color: #000080;
+				font-size: 18px;
+				font-weight: bold;
+			}
+			
+			.article-date {
+				color: #000000;
+				font-size: 12px;
+				margin: 5px 0;
+			}
+			
+			.article-content {
+				padding: 15px;
+				line-height: 1.6;
+				color: #000000;
+			}
+			
+			.article-content h1,
+			.article-content h2,
+			.article-content h3,
+			.article-content h4,
+			.article-content h5,
+			.article-content h6 {
+				color: #000080;
+				margin: 20px 0 10px 0;
+			}
+			
+			.article-content p {
+				margin: 10px 0;
+			}
+			
+			.article-content a {
+				color: #000080;
+				text-decoration: underline;
+			}
+			
+			.article-content a:hover {
+				color: #0000ff;
+			}
+			
+			.article-content img {
+				max-width: 100%;
+				height: auto;
+				border: 1px solid #808080;
+				margin: 10px 0;
+			}
+			
+			.article-content blockquote {
+				border-left: 3px solid #808080;
+				padding-left: 15px;
+				margin: 15px 0;
+				color: #404040;
 				font-style: italic;
+			}
+			
+			.article-content code {
+				background: #f0f0f0;
+				border: 1px solid #808080;
+				padding: 2px 4px;
+				font-family: 'Courier New', monospace;
+				font-size: 12px;
+			}
+			
+			.article-content pre {
+				background: #f0f0f0;
+				border: 1px solid #808080;
+				padding: 10px;
+				overflow-x: auto;
+				font-family: 'Courier New', monospace;
+				font-size: 12px;
+				margin: 10px 0;
+			}
+			
+			.article-content pre code {
+				background: none;
+				border: none;
+				padding: 0;
+			}
+			
+			.article-navigation {
+				margin-top: 20px;
+				padding: 15px;
+				border-top: 1px solid #808080;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			
+			.nav-link {
+				color: #000000;
+				text-decoration: none;
+				padding: 6px 12px;
+				border: 1px outset #c0c0c0;
+				background: #c0c0c0;
+				display: inline-block;
+				font-size: 14px;
+				max-width: 200px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			
+			.nav-link:hover {
+				border: 1px inset #c0c0c0;
+			}
+			
+			.nav-link.disabled {
+				color: #808080;
+				border: 1px solid #808080;
+				background: #f0f0f0;
+				cursor: not-allowed;
+			}
+			
+			.nav-placeholder {
+				width: 200px;
 			}
 		</style>
 	</head>
 
 	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && (
-						typeof heroImage === 'string' ? 
-							<img width={1020} height={510} src={heroImage} alt="" /> :
-							<Image width={1020} height={510} src={heroImage} alt="" />
-					)}
+		<Navigation />
+		<div class="desktop">
+			<div class="window">
+				<div class="title-bar">
+					<div class="title-bar-text">文章阅读</div>
 				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
+				<div class="window-body">
+					<div class="article-header">
+						<h1 class="article-title">{title}</h1>
+						<div class="article-date">
+							发布时间：<FormattedDate date={pubDate} />
 						</div>
-						<h1>{title}</h1>
-						<hr />
+						{updatedDate && (
+							<div class="article-date">
+								更新时间：<FormattedDate date={updatedDate} />
+							</div>
+						)}
 					</div>
-					<slot />
+					<div class="article-content">
+						<slot />
+					</div>
+					<div class="article-navigation">
+						<div>
+							{prevPost ? (
+								<a href={getPostUrl(prevPost)} class="nav-link" title={prevPost.data.title}>
+									← 上一篇: {prevPost.data.title}
+								</a>
+							) : (
+								<div class="nav-placeholder"></div>
+							)}
+						</div>
+						<div>
+							{nextPost ? (
+								<a href={getPostUrl(nextPost)} class="nav-link" title={nextPost.data.title}>
+									下一篇: {nextPost.data.title} →
+								</a>
+							) : (
+								<div class="nav-placeholder"></div>
+							)}
+						</div>
+					</div>
 				</div>
-			</article>
-		</main>
+			</div>
+		</div>
 		<Footer />
 	</body>
 </html>

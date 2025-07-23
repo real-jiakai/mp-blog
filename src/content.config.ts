@@ -13,6 +13,7 @@ const blog = defineCollection({
 		updatedDate: z.coerce.date().optional(),
 		heroImage: z.union([image(), z.string()]).optional(), // 支持本地图片或远程URL
 		slug: z.string().optional(), // 自定义slug
+		draft: z.boolean().optional(), // 草稿标记
 	}),
 });
 
