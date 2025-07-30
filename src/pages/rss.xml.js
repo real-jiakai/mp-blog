@@ -1,6 +1,14 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import MarkdownIt from 'markdown-it';
+import sanitizeHtml from 'sanitize-html';
+
+const parser = new MarkdownIt({
+	html: true,
+	breaks: true,
+	linkify: true,
+});
 
 export async function GET(context) {
 	const posts = await getCollection('blog', ({ data }) => {
@@ -16,25 +24,23 @@ export async function GET(context) {
 			const month = (date.getMonth() + 1).toString().padStart(2, '0');
 			const slug = post.data.slug || post.id;
 			
-			// 渲染文章内容
-			const { render } = await import('astro:content');
-			const { Content } = await render(post);
+			// 将Markdown转换为HTML
+			const html = parser.render(post.body);
 			
-			// 创建一个临时的渲染环境来获取HTML
-			const html = await new Promise((resolve) => {
-				import('astro/runtime/server/index.js').then(({ renderComponent }) => {
-					// 简化处理：直接使用markdown内容
-					resolve(post.body || '');
-				}).catch(() => {
-					// 如果渲染失败，使用原始markdown内容
-					resolve(post.body || '');
-				});
+			// 清理和净化HTML
+			const sanitizedHtml = sanitizeHtml(html, {
+				allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'video', 'audio']),
+				allowedAttributes: {
+					...sanitizeHtml.defaults.allowedAttributes,
+					img: ['src', 'alt', 'title', 'width', 'height'],
+					a: ['href', 'title', 'target'],
+				},
 			});
 			
 			return {
 				title: post.data.title,
 				description: post.data.description,
-				content: post.body, // 使用markdown原文作为全文内容
+				content: sanitizedHtml, // 使用渲染后的HTML内容
 				pubDate: post.data.pubDate,
 				link: `/${year}/${month}/${slug}/`,
 			};

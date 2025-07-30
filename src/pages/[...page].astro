@@ -40,7 +40,7 @@ const { page } = Astro.props;
 			}
 			
 			.desktop {
-				max-width: 800px;
+				max-width: 1200px;
 				margin: 0 auto;
 				padding: 0 20px;
 				flex: 1;
@@ -66,12 +66,12 @@ const { page } = Astro.props;
 			}
 			
 			.article-item {
-				padding: 15px 20px;
+				padding: 20px 30px;
 				border-bottom: 1px solid #808080;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				margin-bottom: 5px;
+				margin-bottom: 8px;
 			}
 			
 			.article-item:last-child {
@@ -83,8 +83,8 @@ const { page } = Astro.props;
 				text-decoration: none;
 				font-weight: bold;
 				flex: 1;
-				font-size: 16px;
-				line-height: 1.4;
+				font-size: 18px;
+				line-height: 1.5;
 			}
 			
 			.article-title:hover {
@@ -93,9 +93,10 @@ const { page } = Astro.props;
 			
 			.article-date {
 				color: #666666;
-				font-size: 13px;
-				margin-left: 30px;
+				font-size: 14px;
+				margin-left: 40px;
 				white-space: nowrap;
+				min-width: 120px;
 			}
 			
 			.pagination {
