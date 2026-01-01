@@ -237,5 +237,56 @@ function getPostUrl(post: CollectionEntry<'blog'>) {
 			</div>
 		</div>
 		<Footer />
+
+		<!-- Lightbox 图片放大浮层 -->
+		<div class="lightbox-overlay" id="lightbox">
+			<div class="lightbox-window">
+				<div class="lightbox-title-bar">
+					<span class="lightbox-title-bar-text">图片预览</span>
+					<button class="lightbox-close-btn" id="lightbox-close" aria-label="关闭">×</button>
+				</div>
+				<div class="lightbox-body">
+					<img id="lightbox-img" src="" alt="放大图片" />
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// Lightbox 功能
+			const lightbox = document.getElementById('lightbox');
+			const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+			const closeBtn = document.getElementById('lightbox-close');
+
+			// 为所有文章图片添加点击事件
+			document.querySelectorAll('.article-content img').forEach(img => {
+				img.addEventListener('click', (e) => {
+					const target = e.target as HTMLImageElement;
+					lightboxImg.src = target.src;
+					lightboxImg.alt = target.alt || '放大图片';
+					lightbox?.classList.add('active');
+				});
+			});
+
+			// 关闭 lightbox
+			function closeLightbox() {
+				lightbox?.classList.remove('active');
+			}
+
+			closeBtn?.addEventListener('click', closeLightbox);
+
+			// 点击遮罩层关闭
+			lightbox?.addEventListener('click', (e) => {
+				if (e.target === lightbox) {
+					closeLightbox();
+				}
+			});
+
+			// ESC 键关闭
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && lightbox?.classList.contains('active')) {
+					closeLightbox();
+				}
+			});
+		</script>
 	</body>
 </html>
